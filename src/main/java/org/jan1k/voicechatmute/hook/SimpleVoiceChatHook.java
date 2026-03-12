@@ -46,6 +46,7 @@ public class SimpleVoiceChatHook implements VoiceHook, VoicechatPlugin {
 
     @Override
     public void initialize(VoicechatApi api) {
+        this.plugin.getLogger().info("[VoicechatMute] SimpleVoiceChat initialized the plugin.");
     }
 
     @Override
@@ -58,9 +59,10 @@ public class SimpleVoiceChatHook implements VoiceHook, VoicechatPlugin {
             return;
         }
         UUID playerUuid = event.getSenderConnection().getPlayer().getUuid();
-        if (this.cache.isMuted(playerUuid)) {
+        String reason = this.cache.getMuteReason(playerUuid);
+        if (reason != null) {
             event.cancel();
-            this.notifications.warnPlayer(playerUuid);
+            this.notifications.warnPlayer(playerUuid, reason);
         }
     }
 }

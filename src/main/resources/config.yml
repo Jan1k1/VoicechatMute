@@ -9,5 +9,5 @@ settings:
 
 
 messages:
-  muted-actionbar: "<red>You are currently muted and cannot speak in voice chat.</red>"
-  muted-chat: "&cYou are currently muted and cannot speak in voice chat."
+  muted-actionbar: "<red>You are muted in voice chat!</red> <gray>|</gray> <gold>Reason: %reason%</gold>"
+  muted-chat: "&cYou are muted in voice chat! &7| &6Reason: %reason%"

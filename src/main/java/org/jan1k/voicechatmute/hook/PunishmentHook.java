@@ -8,5 +8,5 @@ public interface PunishmentHook {
 
     void unregister();
 
-    boolean isMuted(UUID uuid);
+    String getMuteReason(UUID uuid);
 }

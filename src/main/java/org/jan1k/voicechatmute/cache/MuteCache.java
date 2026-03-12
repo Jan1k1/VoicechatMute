@@ -6,14 +6,22 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class MuteCache {
 
-    private final Map<UUID, Boolean> mutedPlayers = new ConcurrentHashMap<>();
+    private final Map<UUID, String> mutedPlayers = new ConcurrentHashMap<>();
 
-    public void setMuted(UUID uuid, boolean muted) {
-        this.mutedPlayers.put(uuid, muted);
+    public void setMuted(UUID uuid, String reason) {
+        if (reason == null) {
+            this.mutedPlayers.remove(uuid);
+        } else {
+            this.mutedPlayers.put(uuid, reason);
+        }
+    }
+
+    public String getMuteReason(UUID uuid) {
+        return this.mutedPlayers.get(uuid);
     }
 
     public boolean isMuted(UUID uuid) {
-        return this.mutedPlayers.getOrDefault(uuid, false);
+        return this.mutedPlayers.containsKey(uuid);
     }
 
     public void remove(UUID uuid) {

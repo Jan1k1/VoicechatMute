@@ -11,9 +11,11 @@ import java.util.UUID;
 public class LiteBansHook implements PunishmentHook {
 
 
+    private final VoicechatMute plugin;
     private final MuteCache cache;
 
     public LiteBansHook(VoicechatMute plugin) {
+        this.plugin = plugin;
         this.cache = plugin.getMuteCache();
     }
 
@@ -24,7 +26,9 @@ public class LiteBansHook implements PunishmentHook {
             public void entryAdded(Entry entry) {
                 if ("mute".equals(entry.getType()) && entry.getUuid() != null) {
                     try {
-                        cache.setMuted(UUID.fromString(entry.getUuid()), true);
+                        String reason = entry.getReason();
+                        if (reason == null) reason = "Muted";
+                        cache.setMuted(UUID.fromString(entry.getUuid()), reason);
                     } catch (IllegalArgumentException ignored) {}
                 }
             }
@@ -33,7 +37,7 @@ public class LiteBansHook implements PunishmentHook {
             public void entryRemoved(Entry entry) {
                 if ("mute".equals(entry.getType()) && entry.getUuid() != null) {
                     try {
-                        cache.setMuted(UUID.fromString(entry.getUuid()), false);
+                        cache.setMuted(UUID.fromString(entry.getUuid()), null);
                     } catch (IllegalArgumentException ignored) {}
                 }
             }
@@ -45,7 +49,10 @@ public class LiteBansHook implements PunishmentHook {
     }
 
     @Override
-    public boolean isMuted(UUID uuid) {
-        return Database.get().isPlayerMuted(uuid, null);
+    public String getMuteReason(UUID uuid) {
+        if (Database.get().isPlayerMuted(uuid, null)) {
+            return "Muted";
+        }
+        return null;
     }
 }

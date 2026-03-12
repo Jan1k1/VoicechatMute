@@ -3,6 +3,7 @@ package org.jan1k.voicechatmute.hook;
 import me.leoko.advancedban.bukkit.event.PunishmentEvent;
 import me.leoko.advancedban.bukkit.event.RevokePunishmentEvent;
 import me.leoko.advancedban.manager.PunishmentManager;
+import me.leoko.advancedban.utils.Punishment;
 import me.leoko.advancedban.utils.PunishmentType;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -34,9 +35,16 @@ public class AdvancedBansHook implements PunishmentHook, Listener {
     }
 
     @Override
-    public boolean isMuted(UUID uuid) {
+    public String getMuteReason(UUID uuid) {
         String uuidStr = uuid.toString();
-        return PunishmentManager.get().isMuted(uuidStr) || PunishmentManager.get().isMuted(uuidStr.replace("-", ""));
+        Punishment p = PunishmentManager.get().getMute(uuidStr);
+        if (p == null) {
+            p = PunishmentManager.get().getMute(uuidStr.replace("-", ""));
+        }
+        if (p != null) {
+            return p.getReason();
+        }
+        return null;
     }
 
     @EventHandler
@@ -50,7 +58,7 @@ public class AdvancedBansHook implements PunishmentHook, Listener {
                 }
                 try {
                     UUID uuid = UUID.fromString(uuidStr);
-                    this.cache.setMuted(uuid, true);
+                    this.cache.setMuted(uuid, event.getPunishment().getReason());
                 } catch (IllegalArgumentException ignored) {}
             }
         }
@@ -67,7 +75,7 @@ public class AdvancedBansHook implements PunishmentHook, Listener {
                 }
                 try {
                     UUID uuid = UUID.fromString(uuidStr);
-                    this.cache.setMuted(uuid, false);
+                    this.cache.setMuted(uuid, null);
                 } catch (IllegalArgumentException ignored) {}
             }
         }

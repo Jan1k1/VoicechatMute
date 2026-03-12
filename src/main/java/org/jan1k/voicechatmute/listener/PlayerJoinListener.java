@@ -25,13 +25,20 @@ public class PlayerJoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         UUID uuid = event.getPlayer().getUniqueId();
         this.plugin.getServer().getAsyncScheduler().runNow(this.plugin, task -> {
-            boolean muted = this.punishmentHooks.stream().anyMatch(hook -> hook.isMuted(uuid));
-            this.plugin.getMuteCache().setMuted(uuid, muted);
+            String reason = null;
+            for (PunishmentHook hook : this.punishmentHooks) {
+                reason = hook.getMuteReason(uuid);
+                if (reason != null) {
+                    break;
+                }
+            }
+            this.plugin.getMuteCache().setMuted(uuid, reason);
         });
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onQuit(PlayerQuitEvent event) {
+        this.plugin.getLogger().info("[VoicechatMute] Player Quit: " + event.getPlayer().getName() + " - Removed from cache.");
         this.plugin.getMuteCache().remove(event.getPlayer().getUniqueId());
     }
 }

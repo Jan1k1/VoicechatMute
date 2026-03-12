@@ -15,35 +15,42 @@ import java.util.concurrent.ConcurrentHashMap;
 public class NotificationManager {
 
     private final VoicechatMute plugin;
-    private final Map<UUID, Long> lastWarning = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> lastActionBarWarning = new ConcurrentHashMap<>();
+    private final Map<UUID, Long> lastChatWarning = new ConcurrentHashMap<>();
 
     public NotificationManager(VoicechatMute plugin) {
         this.plugin = plugin;
     }
 
-    public void warnPlayer(UUID uuid) {
-        long now = System.currentTimeMillis();
-        long last = this.lastWarning.getOrDefault(uuid, 0L);
-        if (now - last < 3000L) {
-            return;
-        }
-        this.lastWarning.put(uuid, now);
-
+    public void warnPlayer(UUID uuid, String reason) {
         Player player = Bukkit.getPlayer(uuid);
         if (player == null) {
             return;
         }
 
+        long now = System.currentTimeMillis();
+        boolean sendActionBar = (now - this.lastActionBarWarning.getOrDefault(uuid, 0L)) >= 3000L;
+        boolean sendChat = (now - this.lastChatWarning.getOrDefault(uuid, 0L)) >= 60000L;
+
+        if (!sendActionBar && !sendChat) {
+            return;
+        }
+
+        if (sendActionBar) this.lastActionBarWarning.put(uuid, now);
+        if (sendChat) this.lastChatWarning.put(uuid, now);
+
         Runnable task = () -> {
             ConfigManager config = this.plugin.getConfigManager();
-            String actionbar = config.getMessage("muted-actionbar");
-            if (actionbar != null && !actionbar.isEmpty()) {
-                player.sendActionBar(parse(actionbar));
+            String actionbarTemplate = config.getMessage("muted-actionbar");
+            if (sendActionBar && actionbarTemplate != null && !actionbarTemplate.isEmpty()) {
+                String msg = actionbarTemplate.replace("%reason%", reason != null ? reason : "Muted");
+                player.sendActionBar(parse(msg));
             }
 
-            String chat = config.getMessage("muted-chat");
-            if (chat != null && !chat.isEmpty()) {
-                player.sendMessage(parse(chat));
+            String chatTemplate = config.getMessage("muted-chat");
+            if (sendChat && chatTemplate != null && !chatTemplate.isEmpty()) {
+                String msg = chatTemplate.replace("%reason%", reason != null ? reason : "Muted");
+                player.sendMessage(parse(msg));
             }
         };
 
