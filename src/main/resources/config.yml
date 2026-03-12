@@ -1,0 +1,13 @@
+# VoicechatMute Configuration
+# Compatible with Paper & Folia
+
+settings:
+  hooks:
+    litebans: true
+    advancedban: true
+    simplevoicechat: true
+    plasmovoice: true
+
+messages:
+  muted-actionbar: "<red>You are currently muted and cannot speak in voice chat.</red>"
+  muted-chat: "&cYou are currently muted and cannot speak in voice chat."
