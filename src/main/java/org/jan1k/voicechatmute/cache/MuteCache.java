@@ -24,6 +24,10 @@ public class MuteCache {
         return this.mutedPlayers.containsKey(uuid);
     }
 
+    public java.util.Set<UUID> getMutedPlayers() {
+        return this.mutedPlayers.keySet();
+    }
+
     public void remove(UUID uuid) {
         this.mutedPlayers.remove(uuid);
     }

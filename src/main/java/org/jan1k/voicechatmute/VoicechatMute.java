@@ -44,6 +44,17 @@ public class VoicechatMute extends JavaPlugin {
         VoicechatMuteCommand cmd = new VoicechatMuteCommand(this);
         getCommand("voicechatmute").setExecutor(cmd);
         getCommand("voicechatmute").setTabCompleter(cmd);
+
+        getServer().getAsyncScheduler().runAtFixedRate(this, task -> {
+            for (java.util.UUID uuid : this.muteCache.getMutedPlayers()) {
+                String reason = null;
+                for (PunishmentHook hook : this.punishmentHooks) {
+                    reason = hook.getMuteReason(uuid);
+                    if (reason != null) break;
+                }
+                this.muteCache.setMuted(uuid, reason);
+            }
+        }, 5L, 5L, java.util.concurrent.TimeUnit.SECONDS);
     }
 
     @Override
