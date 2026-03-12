@@ -1,0 +1,19 @@
+name: VoicechatMute
+version: 1.0.0
+main: org.jan1k.voicechatmute.VoicechatMute
+api-version: 1.20
+description: Mutes players in voice chat when they are muted in text chat.
+author: jan1k
+
+softdepend:
+  - voicechat
+  - plasmo_voice
+  - LiteBans
+  - AdvancedBan
+
+commands:
+  voicechatmute:
+    description: Main command for VoicechatMute
+    aliases:
+      - vcmute
+    permission: voicechatmute.admin
