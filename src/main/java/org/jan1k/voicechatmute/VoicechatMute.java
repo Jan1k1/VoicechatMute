@@ -7,7 +7,7 @@ import org.jan1k.voicechatmute.command.VoicechatMuteCommand;
 import org.jan1k.voicechatmute.config.ConfigManager;
 import org.jan1k.voicechatmute.hook.AdvancedBansHook;
 import org.jan1k.voicechatmute.hook.LiteBansHook;
-import org.jan1k.voicechatmute.hook.PlasmoVoiceHook;
+
 import org.jan1k.voicechatmute.hook.PunishmentHook;
 import org.jan1k.voicechatmute.hook.SimpleVoiceChatHook;
 import org.jan1k.voicechatmute.hook.VoiceHook;
@@ -76,12 +76,6 @@ public class VoicechatMute extends JavaPlugin {
             hook.register();
             this.voiceHooks.add(hook);
             getLogger().info("Hooked into Simple Voice Chat.");
-        }
-        if (this.configManager.isHookEnabled("plasmovoice") && getServer().getPluginManager().isPluginEnabled("plasmo_voice")) {
-            PlasmoVoiceHook hook = new PlasmoVoiceHook(this, this.notificationManager);
-            hook.register();
-            this.voiceHooks.add(hook);
-            getLogger().info("Hooked into Plasmo Voice.");
         }
     }
 

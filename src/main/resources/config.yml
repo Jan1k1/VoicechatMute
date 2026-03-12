@@ -6,7 +6,7 @@ settings:
     litebans: true
     advancedban: true
     simplevoicechat: true
-    plasmovoice: true
+
 
 messages:
   muted-actionbar: "<red>You are currently muted and cannot speak in voice chat.</red>"
