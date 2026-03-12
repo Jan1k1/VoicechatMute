@@ -14,7 +14,7 @@ public class LiteBansHook implements PunishmentHook {
 
     public LiteBansHook(VoicechatMute plugin) {
         this.plugin = plugin;
-        this.cache = this.plugin.getMuteCache();
+        this.cache = plugin.getMuteCache();
     }
 
     @Override
@@ -24,8 +24,7 @@ public class LiteBansHook implements PunishmentHook {
             public void entryAdded(Events.Entry entry) {
                 if ("mute".equals(entry.getType()) && entry.getUuid() != null) {
                     try {
-                        UUID uuid = UUID.fromString(entry.getUuid());
-                        cache.setMuted(uuid, true);
+                        cache.setMuted(UUID.fromString(entry.getUuid()), true);
                     } catch (IllegalArgumentException ignored) {}
                 }
             }
@@ -34,8 +33,7 @@ public class LiteBansHook implements PunishmentHook {
             public void entryRemoved(Events.Entry entry) {
                 if ("mute".equals(entry.getType()) && entry.getUuid() != null) {
                     try {
-                        UUID uuid = UUID.fromString(entry.getUuid());
-                        cache.setMuted(uuid, false);
+                        cache.setMuted(UUID.fromString(entry.getUuid()), false);
                     } catch (IllegalArgumentException ignored) {}
                 }
             }

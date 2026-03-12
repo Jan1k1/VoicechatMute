@@ -1,0 +1,9 @@
+target/
+*.class
+*.jar
+!*-shaded.jar
+.idea/
+*.iml
+*.ipr
+*.iws
+.DS_Store
