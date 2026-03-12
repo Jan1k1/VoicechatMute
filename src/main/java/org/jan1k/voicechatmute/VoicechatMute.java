@@ -36,8 +36,7 @@ public class VoicechatMute extends JavaPlugin {
 
         new Metrics(this, 30073);
 
-        registerPunishmentHooks();
-        registerVoiceHooks();
+        registerHooks();
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, this.punishmentHooks), this);
 
@@ -45,16 +44,21 @@ public class VoicechatMute extends JavaPlugin {
         getCommand("voicechatmute").setExecutor(cmd);
         getCommand("voicechatmute").setTabCompleter(cmd);
 
+        startCacheCleanupTask();
+    }
+
+    private void startCacheCleanupTask() {
         getServer().getAsyncScheduler().runAtFixedRate(this, task -> {
-            for (java.util.UUID uuid : this.muteCache.getMutedPlayers()) {
+            getServer().getOnlinePlayers().forEach(player -> {
+                java.util.UUID uuid = player.getUniqueId();
                 String reason = null;
                 for (PunishmentHook hook : this.punishmentHooks) {
                     reason = hook.getMuteReason(uuid);
                     if (reason != null) break;
                 }
                 this.muteCache.setMuted(uuid, reason);
-            }
-        }, 5L, 5L, java.util.concurrent.TimeUnit.SECONDS);
+            });
+        }, 5L, 10L, java.util.concurrent.TimeUnit.SECONDS);
     }
 
     @Override
@@ -66,28 +70,28 @@ public class VoicechatMute extends JavaPlugin {
         }
     }
 
-    private void registerPunishmentHooks() {
+    private void registerHooks() {
         if (this.configManager.isHookEnabled("litebans") && getServer().getPluginManager().isPluginEnabled("LiteBans")) {
-            LiteBansHook hook = new LiteBansHook(this);
-            hook.register();
-            this.punishmentHooks.add(hook);
-            getLogger().info("Hooked into LiteBans.");
+            registerPunishmentHook(new LiteBansHook(this), "LiteBans");
         }
         if (this.configManager.isHookEnabled("advancedban") && getServer().getPluginManager().isPluginEnabled("AdvancedBan")) {
-            AdvancedBansHook hook = new AdvancedBansHook(this);
-            hook.register();
-            this.punishmentHooks.add(hook);
-            getLogger().info("Hooked into AdvancedBan.");
+            registerPunishmentHook(new AdvancedBansHook(this), "AdvancedBan");
+        }
+        if (this.configManager.isHookEnabled("simplevoicechat") && getServer().getPluginManager().isPluginEnabled("voicechat")) {
+            registerVoiceHook(new SimpleVoiceChatHook(this, this.notificationManager), "Simple Voice Chat");
         }
     }
 
-    private void registerVoiceHooks() {
-        if (this.configManager.isHookEnabled("simplevoicechat") && getServer().getPluginManager().isPluginEnabled("voicechat")) {
-            SimpleVoiceChatHook hook = new SimpleVoiceChatHook(this, this.notificationManager);
-            hook.register();
-            this.voiceHooks.add(hook);
-            getLogger().info("Hooked into Simple Voice Chat.");
-        }
+    private void registerPunishmentHook(PunishmentHook hook, String name) {
+        hook.register();
+        this.punishmentHooks.add(hook);
+        getLogger().info("Hooked into " + name + ".");
+    }
+
+    private void registerVoiceHook(VoiceHook hook, String name) {
+        hook.register();
+        this.voiceHooks.add(hook);
+        getLogger().info("Hooked into " + name + ".");
     }
 
     public static VoicechatMute getInstance() {
