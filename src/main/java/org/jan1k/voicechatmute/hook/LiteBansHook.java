@@ -1,6 +1,7 @@
 package org.jan1k.voicechatmute.hook;
 
 import litebans.api.Database;
+import litebans.api.Entry;
 import litebans.api.Events;
 import org.jan1k.voicechatmute.VoicechatMute;
 import org.jan1k.voicechatmute.cache.MuteCache;
@@ -9,11 +10,10 @@ import java.util.UUID;
 
 public class LiteBansHook implements PunishmentHook {
 
-    private final VoicechatMute plugin;
+
     private final MuteCache cache;
 
     public LiteBansHook(VoicechatMute plugin) {
-        this.plugin = plugin;
         this.cache = plugin.getMuteCache();
     }
 
@@ -21,7 +21,7 @@ public class LiteBansHook implements PunishmentHook {
     public void register() {
         Events.get().register(new Events.Listener() {
             @Override
-            public void entryAdded(Events.Entry entry) {
+            public void entryAdded(Entry entry) {
                 if ("mute".equals(entry.getType()) && entry.getUuid() != null) {
                     try {
                         cache.setMuted(UUID.fromString(entry.getUuid()), true);
@@ -30,7 +30,7 @@ public class LiteBansHook implements PunishmentHook {
             }
 
             @Override
-            public void entryRemoved(Events.Entry entry) {
+            public void entryRemoved(Entry entry) {
                 if ("mute".equals(entry.getType()) && entry.getUuid() != null) {
                     try {
                         cache.setMuted(UUID.fromString(entry.getUuid()), false);

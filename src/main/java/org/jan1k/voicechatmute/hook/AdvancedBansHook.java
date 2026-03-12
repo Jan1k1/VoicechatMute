@@ -35,18 +35,8 @@ public class AdvancedBansHook implements PunishmentHook, Listener {
 
     @Override
     public boolean isMuted(UUID uuid) {
-        String uuidStr = uuid.toString().replace("-", "");
-        if (PunishmentManager.get().hasPunishment(uuidStr, PunishmentType.MUTE)) {
-            return true;
-        }
-        if (PunishmentManager.get().hasPunishment(uuidStr, PunishmentType.TEMP_MUTE)) {
-            return true;
-        }
-        String uuidDashed = uuid.toString();
-        if (PunishmentManager.get().hasPunishment(uuidDashed, PunishmentType.MUTE)) {
-            return true;
-        }
-        return PunishmentManager.get().hasPunishment(uuidDashed, PunishmentType.TEMP_MUTE);
+        String uuidStr = uuid.toString();
+        return PunishmentManager.get().isMuted(uuidStr) || PunishmentManager.get().isMuted(uuidStr.replace("-", ""));
     }
 
     @EventHandler

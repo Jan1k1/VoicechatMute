@@ -1,6 +1,7 @@
 package org.jan1k.voicechatmute.hook;
 
 import de.maxhenkel.voicechat.api.BukkitVoicechatService;
+import de.maxhenkel.voicechat.api.VoicechatApi;
 import de.maxhenkel.voicechat.api.VoicechatPlugin;
 import de.maxhenkel.voicechat.api.VoicechatServerApi;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
@@ -35,9 +36,7 @@ public class SimpleVoiceChatHook implements VoiceHook, VoicechatPlugin {
 
     @Override
     public void unregister() {
-        if (this.service != null) {
-            this.service.unregisterPlugin(this);
-        }
+        // No unregister method in BukkitVoicechatService 2.5.0
     }
 
     @Override
@@ -46,7 +45,7 @@ public class SimpleVoiceChatHook implements VoiceHook, VoicechatPlugin {
     }
 
     @Override
-    public void initialize(VoicechatServerApi api) {
+    public void initialize(VoicechatApi api) {
     }
 
     @Override
